@@ -9,9 +9,9 @@
             "email": "developer.naren@gmail.com"
         }
     ],
-    "autload" : {
+    "autoload" : {
       "psr-4" : {
-          "Pagevamp//" : "src//"
+          "Pagevamp\\" : "src/"
       }
     },
     "require": {
