@@ -13,30 +13,39 @@ class CloudWatchServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $app = $this->app;
-
-        // Listen to log messages.
-        $app['log']->listen(function () use ($app) {
-            $args = func_get_args();
-
-            // Laravel 5.4 returns a MessageLogged instance only
-            if (1 == count($args)) {
+        if (!env('DISABLE_CLOUDWATCH_LOG')) {
+            $app = $this->app;
+            $app['log']->listen(function () use ($app) {
+                $args = func_get_args();
                 $level = $args[0]->level;
                 $message = $args[0]->message;
                 $context = $args[0]->context;
-            } else {
-                $level = $args[0];
-                $message = $args[1];
-                $context = $args[2];
-            }
 
-            if ($message instanceof \ErrorException) {
-                return $this->getLogger()->log($level, $message, $context);
-            }
-            if ($app['cloudwatch.logger'] instanceof Logger) {
-                $app['cloudwatch.logger']->log($level, $message, $context);
-            }
-        });
+                if ($message instanceof \ErrorException) {
+                    return $this->getLogger()->log($level, $message, $context);
+                }
+
+                if ($app['cloudwatch.logger'] instanceof Logger) {
+                    $app['cloudwatch.logger']->log($level, $message, $context);
+                }
+            });
+        }
+    }
+
+    public function getLogger(): Logger
+    {
+        $cwClient = new CloudWatchLogsClient($this->getCredentials());
+        $loggingConfig = config('logging.channels.cloudwatch');
+        $streamName = $loggingConfig['stream_name'];
+        $retentionDays = $loggingConfig['retention'];
+        $groupName = $loggingConfig['group_name'];
+        $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, 10000);
+        $logger = new Logger($loggingConfig['name']);
+        $formatter = new LineFormatter('%channel%: %level_name%: %message% %context% %extra%', null, false, true);
+        $logHandler->setFormatter($formatter);
+        $logger->pushHandler($logHandler);
+
+        return $logger;
     }
 
     /**
@@ -46,19 +55,16 @@ class CloudWatchServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('cloudwatch.logger', function () {
-            $cwClient = new CloudWatchLogsClient($this->getCredentials());
-            $loggingConfig = config('logging');
-            $cwStreamNameApp = $loggingConfig['stream_name'];
-            $cwRetentionDays = $loggingConfig['retention'];
-            $logHandler = new CloudWatch($cwClient, 'chs-api', $cwStreamNameApp, $cwRetentionDays, 10000, ['application' => $loggingConfig['tag_name']]);
-            $logger = new Logger($loggingConfig['name']);
-            $formatter = new LineFormatter('%channel%: %level_name%: %message% %context% %extra%', null, false, true);
-            $logHandler->setFormatter($formatter);
-            $logger->pushHandler($logHandler);
+        if (!env('DISABLE_CLOUDWATCH_LOG')) {
+            $this->mergeConfigFrom(
+                __DIR__.'/../../config/logging.php',
+                'logging.channels'
+            );
 
-            return $logger;
-        });
+            $this->app->singleton('cloudwatch.logger', function () {
+                return $this->getLogger();
+            });
+        }
     }
 
     /**
@@ -71,17 +77,16 @@ class CloudWatchServiceProvider extends ServiceProvider
      * 'key' => env('CLOUDWATCH_LOG_KEY', ''),
      * 'secret' => env('CLOUDWATCH_LOG_SECRET', ''),
      * 'stream_name' => env('CLOUDWATCH_LOG_STREAM_NAME', 'laravel_app'),
-     * 'tag_name' => env('CLOUDWATCH_LOG_TAG_NAME', 'laravel_app'),
      * 'retention' => env('CLOUDWATCH_LOG_RETENTION_DAYS', 14),
      * 'group_name' => env('CLOUDWATCH_LOG_GROUP_NAME', 'laravel_app'),
-     *          'version' => env('CLOUDWATCH_LOG_VERSION', 'latest'),
+     *  'version' => env('CLOUDWATCH_LOG_VERSION', 'latest'),
      * ]
      *
      * @return array
      */
     private function getCredentials()
     {
-        $loggingConfig = config('logging');
+        $loggingConfig = config('logging.channels');
 
         if (!isset($loggingConfig['cloudwatch'])) {
             throw new IncompleteCloudWatchConfig('Configuration Missing for Cloudwatch Log');
@@ -90,7 +95,7 @@ class CloudWatchServiceProvider extends ServiceProvider
         $cloudWatchConfigs = $loggingConfig['cloudwatch'];
 
         if (!isset($cloudWatchConfigs['key'], $cloudWatchConfigs['secret'], $cloudWatchConfigs['region'])) {
-            throw new IncompleteCloudWatchConfig('Configuration Missing for Cloudwatch Log');
+            throw new IncompleteCloudWatchConfig('One or Multiple Configuration Missing for Cloudwatch Log: key, secret and/or region');
         }
 
         return $awsCredentials = [
