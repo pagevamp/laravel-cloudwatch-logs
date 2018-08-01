@@ -1,6 +1,6 @@
 <?php
 
-namespace Pagevamp\IncompleteCloudWatchConfig;
+namespace Pagevamp\Exceptions;
 
 use Exception;
 

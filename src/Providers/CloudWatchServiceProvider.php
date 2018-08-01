@@ -7,7 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Maxbanton\Cwh\Handler\CloudWatch;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Logger;
-use Pagevamp\IncompleteCloudWatchConfig\IncompleteCloudWatchConfig;
+use Pagevamp\Exceptions\IncompleteCloudWatchConfig;
 
 class CloudWatchServiceProvider extends ServiceProvider
 {
