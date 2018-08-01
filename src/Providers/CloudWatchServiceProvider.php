@@ -18,9 +18,17 @@ class CloudWatchServiceProvider extends ServiceProvider
         // Listen to log messages.
         $app['log']->listen(function () use ($app) {
             $args = func_get_args();
-            $level = $args[0];
-            $message = $args[1];
-            $context = $args[2];
+
+            // Laravel 5.4 returns a MessageLogged instance only
+            if (1 == count($args)) {
+                $level = $args[0]->level;
+                $message = $args[0]->message;
+                $context = $args[0]->context;
+            } else {
+                $level = $args[0];
+                $message = $args[1];
+                $context = $args[2];
+            }
 
             if ($message instanceof \ErrorException) {
                 return $this->getLogger()->log($level, $message, $context);
