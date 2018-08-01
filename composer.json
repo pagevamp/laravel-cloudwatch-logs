@@ -1,5 +1,5 @@
 {
-    "name": "pagevamp/laravel-clouwatch-logs",
+    "name": "pagevamp/laravel-cloudwatch-logs",
     "description": "Laravel Adapter for AWS CloudWatch",
     "type": "library",
     "license": "MIT",
@@ -9,14 +9,23 @@
             "email": "developer.naren@gmail.com"
         }
     ],
-    "autload" : {
+    "autoload" : {
       "psr-4" : {
-          "Pagevamp//" : "src//"
+          "Pagevamp\\" : "src/"
       }
     },
     "require": {
         "maxbanton/cwh": "^1.1",
         "illuminate/support": "^5.6",
         "friendsofphp/php-cs-fixer": "^2.12"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Pagevamp\\Providers\\CloudWatchServiceProvider"
+            ]
+
+        }
     }
+
 }
