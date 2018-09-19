@@ -94,17 +94,14 @@ class CloudWatchServiceProvider extends ServiceProvider
 
         $cloudWatchConfigs = $loggingConfig['cloudwatch'];
 
-        if (!isset($cloudWatchConfigs['key'], $cloudWatchConfigs['secret'], $cloudWatchConfigs['region'])) {
-            throw new IncompleteCloudWatchConfig('One or Multiple Configuration Missing for Cloudwatch Log: key, secret and/or region');
+        if (!isset($cloudWatchConfigs['region'])) {
+            throw new IncompleteCloudWatchConfig('Missing region key-value');
         }
 
         return $awsCredentials = [
             'region' => $cloudWatchConfigs['region'],
             'version' => $cloudWatchConfigs['version'],
-            'credentials' => [
-                'key' => $cloudWatchConfigs['key'],
-                'secret' => $cloudWatchConfigs['secret'],
-            ],
+            'credentials' => $cloudWatchConfigs['credentials'],
         ];
     }
 }
