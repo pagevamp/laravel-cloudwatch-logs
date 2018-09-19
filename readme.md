@@ -19,6 +19,7 @@ Configs for logging is defined at config/logging.php. You should add
         'secret' => env('CLOUDWATCH_LOG_SECRET', ''),
         'stream_name' => env('CLOUDWATCH_LOG_STREAM_NAME', 'laravel_app'),
         'retention' => env('CLOUDWATCH_LOG_RETENTION_DAYS', 14),
+        'batch_size' => env('CLOUDWATCH_LOG_BATCH_SIZE', 10000),
         'group_name' => env('CLOUDWATCH_LOG_GROUP_NAME', 'laravel_app'),
         'version' => env('CLOUDWATCH_LOG_VERSION', 'latest'),
     ],
