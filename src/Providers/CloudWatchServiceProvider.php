@@ -17,9 +17,17 @@ class CloudWatchServiceProvider extends ServiceProvider
             $app = $this->app;
             $app['log']->listen(function () use ($app) {
                 $args = func_get_args();
-                $level = $args[0]->level;
-                $message = $args[0]->message;
-                $context = $args[0]->context;
+
+	            // Laravel 5.4 returns a MessageLogged instance only
+	            if (count($args) == 1) {
+		            $level = $args[0]->level;
+		            $message = $args[0]->message;
+		            $context = $args[0]->context;
+	            } else {
+		            $level = $args[0];
+		            $message = $args[1];
+		            $context = $args[2];
+	            }
 
                 if ($message instanceof \ErrorException) {
                     return $this->getLogger()->log($level, $message, $context);
@@ -32,7 +40,7 @@ class CloudWatchServiceProvider extends ServiceProvider
         }
     }
 
-    public function getLogger(): Logger
+    public function getLogger()
     {
         $cwClient = new CloudWatchLogsClient($this->getCredentials());
         $loggingConfig = config('logging.channels.cloudwatch');
