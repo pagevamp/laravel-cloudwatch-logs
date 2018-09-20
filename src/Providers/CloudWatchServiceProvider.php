@@ -47,7 +47,8 @@ class CloudWatchServiceProvider extends ServiceProvider
         $streamName = $loggingConfig['stream_name'];
         $retentionDays = $loggingConfig['retention'];
         $groupName = $loggingConfig['group_name'];
-        $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, 10000);
+        $batchSize = isset($loggingConfig['batch_size']) ? $loggingConfig['batch_size'] : 10000;
+        $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, $batchSize);
         $logger = new Logger($loggingConfig['name']);
         $formatter = new LineFormatter('%channel%: %level_name%: %message% %context% %extra%', null, false, true);
         $logHandler->setFormatter($formatter);
@@ -102,17 +103,14 @@ class CloudWatchServiceProvider extends ServiceProvider
 
         $cloudWatchConfigs = $loggingConfig['cloudwatch'];
 
-        if (!isset($cloudWatchConfigs['key'], $cloudWatchConfigs['secret'], $cloudWatchConfigs['region'])) {
-            throw new IncompleteCloudWatchConfig('One or Multiple Configuration Missing for Cloudwatch Log: key, secret and/or region');
+        if (!isset($cloudWatchConfigs['region'])) {
+            throw new IncompleteCloudWatchConfig('Missing region key-value');
         }
 
         return $awsCredentials = [
             'region' => $cloudWatchConfigs['region'],
             'version' => $cloudWatchConfigs['version'],
-            'credentials' => [
-                'key' => $cloudWatchConfigs['key'],
-                'secret' => $cloudWatchConfigs['secret'],
-            ],
+            'credentials' => $cloudWatchConfigs['credentials'],
         ];
     }
 }

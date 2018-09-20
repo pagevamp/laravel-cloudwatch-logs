@@ -37,13 +37,13 @@ This package uses laravel's [Package discovery](https://laravel.com/docs/5.6/pac
 
 Add to the `providers` array in `config/app.php`:
 
-```php
+```
 Pagevamp\Providers\CloudWatchServiceProvider::class
 ```
 
 ### Concept
 
-This package relies on laravel's listener for log events. This package DOES NOT replace the default logging. Instead adds additional log to AWS CLoud Watch. Hence you do not have to change the default log driver to make this work.
+This package relies on laravel's listener for log events. This package DOES NOT replace the default logging, instead adds additional log to AWS CLoud Watch. Hence you do not have to change the default log driver to make this work.
 
 ### Contribution
 
