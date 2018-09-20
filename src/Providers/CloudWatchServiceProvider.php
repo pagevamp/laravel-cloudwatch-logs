@@ -39,7 +39,8 @@ class CloudWatchServiceProvider extends ServiceProvider
         $streamName = $loggingConfig['stream_name'];
         $retentionDays = $loggingConfig['retention'];
         $groupName = $loggingConfig['group_name'];
-        $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, 10000);
+        $batchSize = isset($loggingConfig['batch_size']) ? $loggingConfig['batch_size'] : 10000;
+        $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, $batchSize);
         $logger = new Logger($loggingConfig['name']);
         $formatter = new LineFormatter('%channel%: %level_name%: %message% %context% %extra%', null, false, true);
         $logHandler->setFormatter($formatter);
