@@ -8,6 +8,7 @@ use Monolog\Formatter\JsonFormatter;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Formatter\LogglyFormatter;
 use Monolog\Logger;
+use Pagevamp\Exceptions\IncompleteCloudWatchConfig;
 use Pagevamp\Providers\CloudWatchServiceProvider;
 use PHPUnit\Framework\TestCase;
 use Mockery;
@@ -217,5 +218,44 @@ class CloudWatchServiceProviderTest extends TestCase
             LogglyFormatter::class,
             $logger->getHandlers()[0]->getFormatter()
         );
+    }
+
+    public function testInvalidFormatterWillThrowException()
+    {
+        $cloudwatchConfigs = [
+            'name' => '',
+            'region' => '',
+            'credentials' => [
+                'key' => '',
+                'secret' => '',
+            ],
+            'stream_name' => 'laravel_app',
+            'retention' => 14,
+            'group_name' => 'laravel_app',
+            'version' => 'latest',
+            'formatter' => 'InvalidFormatter',
+        ];
+
+        $config = Mockery::mock(Repository::class);
+        $config->shouldReceive('get')
+            ->once()
+            ->with('logging.channels')
+            ->andReturn([
+                'cloudwatch' => $cloudwatchConfigs,
+            ]);
+        $config->shouldReceive('get')
+            ->once()
+            ->with('logging.channels.cloudwatch')
+            ->andReturn($cloudwatchConfigs);
+
+        $app = Mockery::mock(Application::class);
+        $app->shouldReceive('make')
+            ->once()
+            ->with('config')
+            ->andReturn($config);
+
+        $this->expectException(IncompleteCloudWatchConfig::class);
+        $provider = new CloudWatchServiceProvider($app);
+        $provider->getLogger();
     }
 }
