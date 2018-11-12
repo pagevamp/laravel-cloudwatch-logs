@@ -16,18 +16,18 @@ class CloudWatchServiceProvider extends ServiceProvider
         if (!env('DISABLE_CLOUDWATCH_LOG')) {
             $app = $this->app;
             $app['log']->listen(function () use ($app) {
-                $args = func_get_args();
+                $args = \func_get_args();
 
-	            // Laravel 5.4 returns a MessageLogged instance only
-	            if (count($args) == 1) {
-		            $level = $args[0]->level;
-		            $message = $args[0]->message;
-		            $context = $args[0]->context;
-	            } else {
-		            $level = $args[0];
-		            $message = $args[1];
-		            $context = $args[2];
-	            }
+                // Laravel 5.4 returns a MessageLogged instance only
+                if (1 == \count($args)) {
+                    $level = $args[0]->level;
+                    $message = $args[0]->message;
+                    $context = $args[0]->context;
+                } else {
+                    $level = $args[0];
+                    $message = $args[1];
+                    $context = $args[2];
+                }
 
                 if ($message instanceof \ErrorException) {
                     return $this->getLogger()->log($level, $message, $context);
@@ -58,33 +58,6 @@ class CloudWatchServiceProvider extends ServiceProvider
         $logger->pushHandler($logHandler);
 
         return $logger;
-    }
-
-    /**
-     * Resolve a Formatter instance from configurations or use LineFormatter
-     * as default.
-     *
-     * @param array $configs
-     *
-     * @return \Monolog\Formatter\FormatterInterface
-     */
-    private function resolveFormatter(array $configs)
-    {
-        if (isset($configs['formatter'])) {
-            $formatter = $configs['formatter'];
-
-            if (is_string($formatter) && class_exists($formatter)) {
-                return $this->app->make($formatter);
-            }
-            if (is_callable($formatter)) {
-                return $formatter($configs);
-            }
-        }
-
-        return new LineFormatter(
-            '%channel%: %level_name%: %message% %context% %extra%',
-            null, false, true
-        );
     }
 
     /**
@@ -124,6 +97,7 @@ class CloudWatchServiceProvider extends ServiceProvider
      * ]
      *
      * @return array
+     *
      * @throws \Pagevamp\Exceptions\IncompleteCloudWatchConfig
      */
     protected function getCredentials()
@@ -145,5 +119,34 @@ class CloudWatchServiceProvider extends ServiceProvider
             'version' => $cloudWatchConfigs['version'],
             'credentials' => $cloudWatchConfigs['credentials'],
         ];
+    }
+
+    /**
+     * Resolve a Formatter instance from configurations or use LineFormatter
+     * as default.
+     *
+     * @param array $configs
+     *
+     * @return \Monolog\Formatter\FormatterInterface
+     */
+    private function resolveFormatter(array $configs)
+    {
+        if (isset($configs['formatter'])) {
+            $formatter = $configs['formatter'];
+
+            if (\is_string($formatter) && class_exists($formatter)) {
+                return $this->app->make($formatter);
+            }
+            if (\is_callable($formatter)) {
+                return $formatter($configs);
+            }
+        }
+
+        return new LineFormatter(
+            '%channel%: %level_name%: %message% %context% %extra%',
+            null,
+            false,
+            true
+        );
     }
 }

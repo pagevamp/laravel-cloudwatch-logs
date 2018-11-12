@@ -6,9 +6,9 @@ You can use laravel's default `\Log` class to use this
 
 `\Log::info('user logged in', ['id' => 123, 'name' => 'Naren']);`
 
-### Configs 
+### Config
 
-Configs for logging is defined at `config/logging.php`. Add `cloudwatch` to the `channels` array
+Config for logging is defined at `config/logging.php`. Add `cloudwatch` to the `channels` array
 
 ```
 'channels' =>  [
@@ -23,11 +23,12 @@ Configs for logging is defined at `config/logging.php`. Add `cloudwatch` to the 
             'retention' => env('CLOUDWATCH_LOG_RETENTION_DAYS', 14),
             'group_name' => env('CLOUDWATCH_LOG_GROUP_NAME', 'laravel_app'),
             'version' => env('CLOUDWATCH_LOG_VERSION', 'latest'),
+            'formatter' => \Monolog\Formatter\JsonFormatter::class
         ],
 ]
 ```
 
-Add correct values to keys in your .env file. And it should work. 
+Add correct values to keys in your `.env` file. And it should work. 
 
 ### Add To Project
  

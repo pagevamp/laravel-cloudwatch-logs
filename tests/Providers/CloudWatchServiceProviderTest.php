@@ -2,7 +2,6 @@
 
 namespace Tests\Providers;
 
-
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
 use Monolog\Formatter\JsonFormatter;
@@ -10,8 +9,10 @@ use Monolog\Formatter\LineFormatter;
 use Monolog\Formatter\LogglyFormatter;
 use Monolog\Logger;
 use Pagevamp\Providers\CloudWatchServiceProvider;
+use PHPUnit\Framework\TestCase;
+use Mockery;
 
-class CloudWatchServiceProviderTest extends \PHPUnit\Framework\TestCase
+class CloudWatchServiceProviderTest extends TestCase
 {
     public function testGetLoggerShouldResolveCustomFormatterInstanceFromConfiguration()
     {
@@ -26,24 +27,24 @@ class CloudWatchServiceProviderTest extends \PHPUnit\Framework\TestCase
             'retention' => 14,
             'group_name' => 'laravel_app',
             'version' => 'latest',
-            'formatter' => JsonFormatter::class
+            'formatter' => JsonFormatter::class,
         ];
 
-        $config = \Mockery::mock(Repository::class);
+        $config = Mockery::mock(Repository::class);
         $config->shouldReceive('get')
             ->once()
             ->with('logging.channels')
             ->andReturn([
-                'cloudwatch' => $cloudwatchConfigs
+                'cloudwatch' => $cloudwatchConfigs,
             ]);
         $config->shouldReceive('get')
             ->once()
             ->with('logging.channels.cloudwatch')
             ->andReturn($cloudwatchConfigs);
 
-        $formatter = \Mockery::mock(JsonFormatter::class);
+        $formatter = Mockery::mock(JsonFormatter::class);
 
-        $app = \Mockery::mock(Application::class);
+        $app = Mockery::mock(Application::class);
         $app->shouldReceive('make')
             ->once()
             ->with('config')
@@ -77,24 +78,24 @@ class CloudWatchServiceProviderTest extends \PHPUnit\Framework\TestCase
             'retention' => 14,
             'group_name' => 'laravel_app',
             'version' => 'latest',
-            'formatter' => null
+            'formatter' => null,
         ];
 
-        $config = \Mockery::mock(Repository::class);
+        $config = Mockery::mock(Repository::class);
         $config->shouldReceive('get')
             ->once()
             ->with('logging.channels')
             ->andReturn([
-                'cloudwatch' => $cloudwatchConfigs
+                'cloudwatch' => $cloudwatchConfigs,
             ]);
         $config->shouldReceive('get')
             ->once()
             ->with('logging.channels.cloudwatch')
             ->andReturn($cloudwatchConfigs);
 
-        $formatter = \Mockery::mock(JsonFormatter::class);
+        $formatter = Mockery::mock(JsonFormatter::class);
 
-        $app = \Mockery::mock(Application::class);
+        $app = Mockery::mock(Application::class);
         $app->shouldReceive('make')
             ->once()
             ->with('config')
@@ -127,24 +128,24 @@ class CloudWatchServiceProviderTest extends \PHPUnit\Framework\TestCase
             'stream_name' => 'laravel_app',
             'retention' => 14,
             'group_name' => 'laravel_app',
-            'version' => 'latest'
+            'version' => 'latest',
         ];
 
-        $config = \Mockery::mock(Repository::class);
+        $config = Mockery::mock(Repository::class);
         $config->shouldReceive('get')
             ->once()
             ->with('logging.channels')
             ->andReturn([
-                'cloudwatch' => $cloudwatchConfigs
+                'cloudwatch' => $cloudwatchConfigs,
             ]);
         $config->shouldReceive('get')
             ->once()
             ->with('logging.channels.cloudwatch')
             ->andReturn($cloudwatchConfigs);
 
-        $formatter = \Mockery::mock(LineFormatter::class);
+        $formatter = Mockery::mock(LineFormatter::class);
 
-        $app = \Mockery::mock(Application::class);
+        $app = Mockery::mock(Application::class);
         $app->shouldReceive('make')
             ->once()
             ->with('config')
@@ -178,26 +179,26 @@ class CloudWatchServiceProviderTest extends \PHPUnit\Framework\TestCase
             'retention' => 14,
             'group_name' => 'laravel_app',
             'version' => 'latest',
-            'formatter' => function($configs) {
+            'formatter' => function ($configs) {
                 return new LogglyFormatter();
-            }
+            },
         ];
 
-        $config = \Mockery::mock(Repository::class);
+        $config = Mockery::mock(Repository::class);
         $config->shouldReceive('get')
             ->once()
             ->with('logging.channels')
             ->andReturn([
-                'cloudwatch' => $cloudwatchConfigs
+                'cloudwatch' => $cloudwatchConfigs,
             ]);
         $config->shouldReceive('get')
             ->once()
             ->with('logging.channels.cloudwatch')
             ->andReturn($cloudwatchConfigs);
 
-        $formatter = \Mockery::mock(LogglyFormatter::class);
+        $formatter = Mockery::mock(LogglyFormatter::class);
 
-        $app = \Mockery::mock(Application::class);
+        $app = Mockery::mock(Application::class);
         $app->shouldReceive('make')
             ->once()
             ->with('config')
