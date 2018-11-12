@@ -66,20 +66,25 @@ class CloudWatchServiceProvider extends ServiceProvider
      *
      * @param array $configs
      *
-     * @return \Monolog\Formatter\LineFormatter
+     * @return \Monolog\Formatter\FormatterInterface
      */
     private function resolveFormatter(array $configs)
     {
-        $formatter = new LineFormatter(
+        if (isset($configs['formatter'])) {
+            $formatter = $configs['formatter'];
+
+            if (is_string($formatter) && class_exists($formatter)) {
+                return $this->app->make($formatter);
+            }
+            if (is_callable($formatter)) {
+                return $formatter($configs);
+            }
+        }
+
+        return new LineFormatter(
             '%channel%: %level_name%: %message% %context% %extra%',
             null, false, true
         );
-
-        if ($configs['formatter'] && class_exists($configs['formatter'])) {
-            $formatter = $this->app->make($configs['formatter']);
-        }
-
-        return $formatter;
     }
 
     /**
