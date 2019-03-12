@@ -13,7 +13,7 @@ class CloudWatchServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        if (!env('DISABLE_CLOUDWATCH_LOG')) {
+        if (!config('logging.channels.cloudwatch.disable') ) {
             $app = $this->app;
             $app['log']->listen(function () use ($app) {
                 $args = \func_get_args();
