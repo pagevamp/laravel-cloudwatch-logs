@@ -119,8 +119,8 @@ class CloudWatchServiceProvider extends ServiceProvider
             'version' => $cloudWatchConfigs['version'],
         ];
         
-        // If your server has access to cloudwatch through the EC2 role
-        if(array_key_exists('credentials', $cloudWatchConfigs)) {
+        // If your server has access to cloudwatch through the EC2 role, leave key empty
+        if($cloudWatchConfigs['credentials']['key'])) {
             $awsCredentials['credentials'] = $cloudWatchConfigs['credentials'];
         }
         
