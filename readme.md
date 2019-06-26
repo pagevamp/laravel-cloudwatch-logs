@@ -30,6 +30,8 @@ Config for logging is defined at `config/logging.php`. Add `cloudwatch` to the `
 
 Add correct values to keys in your `.env` file. And it should work. 
 
+If the role of your AWS EC2 instance has access to Cloudwatch logs, `CLOUDWATCH_LOG_KEY` and `CLOUDWATCH_LOG_SECRET` need not be defined in your `.env` file.
+
 ### Add To Project
  
 #### Laravel 5.5 or Higher
@@ -51,3 +53,4 @@ This package relies on laravel's listener for log events. This package DOES NOT 
 ### Contribution
 
 I have added a `pre-commit` hook to run `php-cs-fixer` whenever you make a commit. To enable this run `sh hooks.sh`.
+

@@ -114,11 +114,16 @@ class CloudWatchServiceProvider extends ServiceProvider
             throw new IncompleteCloudWatchConfig('Missing region key-value');
         }
 
-        return $awsCredentials = [
+        $awsCredentials = [
             'region' => $cloudWatchConfigs['region'],
             'version' => $cloudWatchConfigs['version'],
-            'credentials' => $cloudWatchConfigs['credentials'],
         ];
+        
+        if($cloudWatchConfigs['credentials']['key'])) {
+            $awsCredentials['credentials'] = $cloudWatchConfigs['credentials'];
+        }
+        
+        return $awsCredentials;
     }
 
     /**
