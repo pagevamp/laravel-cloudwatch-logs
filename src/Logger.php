@@ -1,0 +1,90 @@
+<?php
+
+namespace Pagevamp;
+
+use Aws\CloudWatch\CloudWatchClient;
+use Aws\CloudWatchLogs\CloudWatchLogsClient;
+use Maxbanton\Cwh\Handler\CloudWatch;
+use Monolog\Logger as MonoLog;
+use Pagevamp\Exceptions\IncompleteCloudWatchConfig;
+
+class Logger
+{
+    private $cwClient;
+    private $config;
+
+    public function __construct($config)
+    {
+        $this->config = $config;
+        $this->cwClient = new CloudWatchClient($config);
+
+        return $this->getLogger();
+    }
+
+    private function getLogger()
+    {
+        $cwClient = new CloudWatchLogsClient($this->getCredentials());
+        $loggingConfig = $this->config['cloudwatch'];
+        $streamName = $loggingConfig['stream_name'];
+        $retentionDays = $loggingConfig['retention'];
+        $groupName = $loggingConfig['group_name'];
+        $batchSize = isset($loggingConfig['batch_size']) ? $loggingConfig['batch_size'] : 10000;
+
+        $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, $batchSize);
+        $logger = new MonoLog($loggingConfig['name']);
+
+        $formatter = $this->resolveFormatter($loggingConfig);
+        $logHandler->setFormatter($formatter);
+        $logger->pushHandler($logHandler);
+
+        return $logger;
+    }
+
+
+
+    /**
+     * This is the way config should be defined in config/logging.php
+     * in key cloudwatch.
+     *
+     * 'cloudwatch' => [
+     *     'name' => env('CLOUDWATCH_LOG_NAME', ''),
+     *     'region' => env('CLOUDWATCH_LOG_REGION', ''),
+     *     'credentials' => [
+     *         'key' => env('CLOUDWATCH_LOG_KEY', ''),
+     *         'secret' => env('CLOUDWATCH_LOG_SECRET', '')
+     *     ],
+     *     'stream_name' => env('CLOUDWATCH_LOG_STREAM_NAME', 'laravel_app'),
+     *     'retention' => env('CLOUDWATCH_LOG_RETENTION_DAYS', 14),
+     *     'group_name' => env('CLOUDWATCH_LOG_GROUP_NAME', 'laravel_app'),
+     *     'version' => env('CLOUDWATCH_LOG_VERSION', 'latest'),
+     * ]
+     *
+     * @return array
+     *
+     * @throws \Pagevamp\Exceptions\IncompleteCloudWatchConfig
+     */
+    private function getCredentials()
+    {
+
+        if (!isset($this->config['cloudwatch'])) {
+            throw new IncompleteCloudWatchConfig('Configuration Missing for Cloudwatch Log');
+        }
+
+        $cloudWatchConfigs = $this->config['cloudwatch'];
+
+        if (!isset($cloudWatchConfigs['region'])) {
+            throw new IncompleteCloudWatchConfig('Missing region key-value');
+        }
+
+        $awsCredentials = [
+            'region' => $cloudWatchConfigs['region'],
+            'version' => $cloudWatchConfigs['version'],
+        ];
+
+        if ($cloudWatchConfigs['credentials']['key']) {
+            $awsCredentials['credentials'] = $cloudWatchConfigs['credentials'];
+        }
+
+        return $awsCredentials;
+    }
+}

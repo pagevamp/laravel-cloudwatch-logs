@@ -6,11 +6,13 @@ use Aws\CloudWatchLogs\CloudWatchLogsClient;
 use Illuminate\Support\ServiceProvider;
 use Maxbanton\Cwh\Handler\CloudWatch;
 use Monolog\Formatter\LineFormatter;
-use Monolog\Logger;
 use Pagevamp\Exceptions\IncompleteCloudWatchConfig;
+use Pagevamp\Logger;
 
 class CloudWatchServiceProvider extends ServiceProvider
 {
+    protected $logginConfig;
+
     public function boot()
     {
         if (!env('DISABLE_CLOUDWATCH_LOG')) {
@@ -30,7 +32,7 @@ class CloudWatchServiceProvider extends ServiceProvider
                 }
 
                 if ($message instanceof \ErrorException) {
-                    return $this->getLogger()->log($level, $message, $context);
+                    return (new Logger($this->app->make('config')->get('logging.channels')))->log($level, $message, $context);
                 }
 
                 if ($app['cloudwatch.logger'] instanceof Logger) {
@@ -40,25 +42,6 @@ class CloudWatchServiceProvider extends ServiceProvider
         }
     }
 
-    public function getLogger()
-    {
-        $cwClient = new CloudWatchLogsClient($this->getCredentials());
-        $loggingConfig = $this->app->make('config')->get('logging.channels.cloudwatch');
-
-        $streamName = $loggingConfig['stream_name'];
-        $retentionDays = $loggingConfig['retention'];
-        $groupName = $loggingConfig['group_name'];
-        $batchSize = isset($loggingConfig['batch_size']) ? $loggingConfig['batch_size'] : 10000;
-
-        $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, $batchSize);
-        $logger = new Logger($loggingConfig['name']);
-
-        $formatter = $this->resolveFormatter($loggingConfig);
-        $logHandler->setFormatter($formatter);
-        $logger->pushHandler($logHandler);
-
-        return $logger;
-    }
 
     /**
      * Code "inspired" from here
@@ -69,7 +52,7 @@ class CloudWatchServiceProvider extends ServiceProvider
     {
         if (!env('DISABLE_CLOUDWATCH_LOG')) {
             $this->mergeConfigFrom(
-                __DIR__.'/../../config/logging.php',
+                __DIR__ . '/../../config/logging.php',
                 'logging.channels'
             );
 
@@ -79,52 +62,6 @@ class CloudWatchServiceProvider extends ServiceProvider
         }
     }
 
-    /**
-     * This is the way config should be defined in config/logging.php
-     * in key cloudwatch.
-     *
-     * 'cloudwatch' => [
-     *     'name' => env('CLOUDWATCH_LOG_NAME', ''),
-     *     'region' => env('CLOUDWATCH_LOG_REGION', ''),
-     *     'credentials' => [
-     *         'key' => env('CLOUDWATCH_LOG_KEY', ''),
-     *         'secret' => env('CLOUDWATCH_LOG_SECRET', '')
-     *     ],
-     *     'stream_name' => env('CLOUDWATCH_LOG_STREAM_NAME', 'laravel_app'),
-     *     'retention' => env('CLOUDWATCH_LOG_RETENTION_DAYS', 14),
-     *     'group_name' => env('CLOUDWATCH_LOG_GROUP_NAME', 'laravel_app'),
-     *     'version' => env('CLOUDWATCH_LOG_VERSION', 'latest'),
-     * ]
-     *
-     * @return array
-     *
-     * @throws \Pagevamp\Exceptions\IncompleteCloudWatchConfig
-     */
-    protected function getCredentials()
-    {
-        $loggingConfig = $this->app->make('config')->get('logging.channels');
-
-        if (!isset($loggingConfig['cloudwatch'])) {
-            throw new IncompleteCloudWatchConfig('Configuration Missing for Cloudwatch Log');
-        }
-
-        $cloudWatchConfigs = $loggingConfig['cloudwatch'];
-
-        if (!isset($cloudWatchConfigs['region'])) {
-            throw new IncompleteCloudWatchConfig('Missing region key-value');
-        }
-
-        $awsCredentials = [
-            'region' => $cloudWatchConfigs['region'],
-            'version' => $cloudWatchConfigs['version'],
-        ];
-        
-        if($cloudWatchConfigs['credentials']['key'])) {
-            $awsCredentials['credentials'] = $cloudWatchConfigs['credentials'];
-        }
-        
-        return $awsCredentials;
-    }
 
     /**
      * * Resolve a Formatter instance from configurations
