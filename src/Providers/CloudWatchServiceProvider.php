@@ -63,37 +63,5 @@ class CloudWatchServiceProvider extends ServiceProvider
     }
 
 
-    /**
-     * * Resolve a Formatter instance from configurations
-     * as default.
-     *
-     * @param array $configs
-     *
-     * @return mixed
-     *
-     * @throws IncompleteCloudWatchConfig
-     */
-    private function resolveFormatter(array $configs)
-    {
-        if (!isset($configs['formatter'])) {
-            return new LineFormatter(
-                '%channel%: %level_name%: %message% %context% %extra%',
-                null,
-                false,
-                true
-            );
-        }
 
-        $formatter = $configs['formatter'];
-
-        if (\is_string($formatter) && class_exists($formatter)) {
-            return $this->app->make($formatter);
-        }
-
-        if (\is_callable($formatter)) {
-            return $formatter($configs);
-        }
-
-        throw new IncompleteCloudWatchConfig('Formatter is missing for the logs');
-    }
 }

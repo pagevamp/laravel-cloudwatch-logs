@@ -5,6 +5,7 @@ namespace Pagevamp;
 use Aws\CloudWatch\CloudWatchClient;
 use Aws\CloudWatchLogs\CloudWatchLogsClient;
 use Maxbanton\Cwh\Handler\CloudWatch;
+use Monolog\Formatter\LineFormatter;
 use Monolog\Logger as MonoLog;
 use Pagevamp\Exceptions\IncompleteCloudWatchConfig;
 
@@ -86,5 +87,41 @@ class Logger
         }
 
         return $awsCredentials;
+    }
+
+
+
+    /**
+     * * Resolve a Formatter instance from configurations
+     * as default.
+     *
+     * @param array $configs
+     *
+     * @return mixed
+     *
+     * @throws IncompleteCloudWatchConfig
+     */
+    private function resolveFormatter(array $configs)
+    {
+        if (!isset($configs['formatter'])) {
+            return new LineFormatter(
+                '%channel%: %level_name%: %message% %context% %extra%',
+                null,
+                false,
+                true
+            );
+        }
+
+        $formatter = $configs['formatter'];
+
+        if (\is_string($formatter) && class_exists($formatter)) {
+            return $this->app->make($formatter);
+        }
+
+        if (\is_callable($formatter)) {
+            return $formatter($configs);
+        }
+
+        throw new IncompleteCloudWatchConfig('Formatter is missing for the logs');
     }
 }
