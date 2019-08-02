@@ -67,7 +67,7 @@ class CloudWatchServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if (!env('DISABLE_CLOUDWATCH_LOG')) {
+        if ($this->app->make('config')->get('logging.channels.cloudwatch.disable')) {
             $this->mergeConfigFrom(
                 __DIR__.'/../../config/logging.php',
                 'logging.channels'
@@ -118,11 +118,11 @@ class CloudWatchServiceProvider extends ServiceProvider
             'region' => $cloudWatchConfigs['region'],
             'version' => $cloudWatchConfigs['version'],
         ];
-        
-        if($cloudWatchConfigs['credentials']['key'])) {
+
+        if ($cloudWatchConfigs['credentials']['key']) {
             $awsCredentials['credentials'] = $cloudWatchConfigs['credentials'];
         }
-        
+
         return $awsCredentials;
     }
 
