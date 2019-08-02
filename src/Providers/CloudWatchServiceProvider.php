@@ -67,16 +67,16 @@ class CloudWatchServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if ($this->app->make('config')->get('logging.channels.cloudwatch.disable')) {
-            $this->mergeConfigFrom(
-                __DIR__.'/../../config/logging.php',
-                'logging.channels'
-            );
+		$this->mergeConfigFrom(
+			__DIR__ . '/../../config/logging.php',
+			'logging.channels'
+		);
 
-            $this->app->singleton('cloudwatch.logger', function () {
-                return $this->getLogger();
-            });
-        }
+		if (!$this->app->make('config')->get('logging.channels.cloudwatch.disable')) {
+			$this->app->singleton('cloudwatch.logger', function () {
+				return $this->getLogger();
+			});
+		}
     }
 
     /**
