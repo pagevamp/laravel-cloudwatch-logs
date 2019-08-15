@@ -1,35 +1,42 @@
 {
-    "name": "pagevamp/laravel-cloudwatch-logs",
-    "description": "Laravel Adapter for AWS CloudWatch",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Naren",
-            "email": "developer.naren@gmail.com"
-        }
-    ],
-    "autoload" : {
-      "psr-4" : {
-          "Pagevamp\\" : "src/",
-          "Tests\\": "tests/"
-      }
+  "name": "pagevamp/laravel-cloudwatch-logs",
+  "description": "Laravel Adapter for AWS CloudWatch",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Naren Chitrakar",
+      "email": "developer.naren@gmail.com"
     },
-    "require": {
-        "maxbanton/cwh": "^1.1",
-        "illuminate/support": "^5.1"
+    {
+      "name": "Ujwal Dhakal",
+      "email": "kevin.ujwal@gmail.com"
     },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Pagevamp\\Providers\\CloudWatchServiceProvider"
-            ]
-
-        }
-    },
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.12",
-        "phpunit/phpunit": "^6.5",
-        "mockery/mockery": "^1.2"
+    {
+      "name": "Sujan Shrestha",
+      "email": "najus.shrestha@gmail.com"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Pagevamp\\": "src/",
+      "Tests\\": "tests/"
+    }
+  },
+  "require": {
+    "maxbanton/cwh": "^1.1",
+    "illuminate/support": "^5.1"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Pagevamp\\Providers\\CloudWatchServiceProvider"
+      ]
+    }
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^2.12",
+    "phpunit/phpunit": "^6.5",
+    "mockery/mockery": "^1.2"
+  }
 }
