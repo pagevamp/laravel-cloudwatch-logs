@@ -9,10 +9,6 @@
       "email": "developer.naren@gmail.com"
     },
     {
-      "name": "Ujwal Dhakal",
-      "email": "kevin.ujwal@gmail.com"
-    },
-    {
       "name": "Sujan Shrestha",
       "email": "najus.shrestha@gmail.com"
     }
@@ -25,7 +21,7 @@
   },
   "require": {
     "maxbanton/cwh": "^1.1",
-    "illuminate/support": "^5.1"
+    "illuminate/support": "^5.1 || ^6.0"
   },
   "extra": {
     "laravel": {
