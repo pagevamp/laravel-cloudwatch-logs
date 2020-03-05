@@ -20,8 +20,7 @@
     }
   },
   "require": {
-    "maxbanton/cwh": "^1.1",
-    "illuminate/support": "^5.1 || ^6.0"
+    "maxbanton/cwh": "^1.1"
   },
   "extra": {
     "laravel": {
