@@ -4,6 +4,7 @@ namespace Tests\Providers;
 
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
+use Mockery;
 use Monolog\Formatter\JsonFormatter;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Formatter\LogglyFormatter;
@@ -11,7 +12,6 @@ use Monolog\Logger;
 use Pagevamp\Exceptions\IncompleteCloudWatchConfig;
 use Pagevamp\Providers\CloudWatchServiceProvider;
 use PHPUnit\Framework\TestCase;
-use Mockery;
 
 class CloudWatchServiceProviderTest extends TestCase
 {

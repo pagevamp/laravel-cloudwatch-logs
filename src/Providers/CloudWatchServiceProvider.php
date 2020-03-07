@@ -13,7 +13,8 @@ class CloudWatchServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        if (!env('DISABLE_CLOUDWATCH_LOG')) {
+        $isCloudWatchDisabled = $this->app->make('config')->get('logging.channels.cloudwatch.disabled');
+        if (!$isCloudWatchDisabled) {
             $app = $this->app;
             $app['log']->listen(function () use ($app) {
                 $args = \func_get_args();
@@ -67,16 +68,16 @@ class CloudWatchServiceProvider extends ServiceProvider
      */
     public function register()
     {
-		$this->mergeConfigFrom(
-			__DIR__ . '/../../config/logging.php',
-			'logging.channels'
-		);
+        $this->mergeConfigFrom(
+            __DIR__.'/../../config/logging.php',
+            'logging.channels'
+        );
 
-		if (!$this->app->make('config')->get('logging.channels.cloudwatch.disable')) {
-			$this->app->singleton('cloudwatch.logger', function () {
-				return $this->getLogger();
-			});
-		}
+        if (!$this->app->make('config')->get('logging.channels.cloudwatch.disable')) {
+            $this->app->singleton('cloudwatch.logger', function () {
+                return $this->getLogger();
+            });
+        }
     }
 
     /**
@@ -127,14 +128,10 @@ class CloudWatchServiceProvider extends ServiceProvider
     }
 
     /**
-     * * Resolve a Formatter instance from configurations
-     * as default.
-     *
-     * @param array $configs
-     *
-     * @return mixed
+     * @return mixed|LineFormatter
      *
      * @throws IncompleteCloudWatchConfig
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     private function resolveFormatter(array $configs)
     {

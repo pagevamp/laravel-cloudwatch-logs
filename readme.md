@@ -1,5 +1,9 @@
 ## Logger for Aws Cloud Watch
 
+### Installation
+
+`composer install pagevamp/laravel-cloudwatch-logs`
+
 ### Example
 
 You can use laravel's default `\Log` class to use this
@@ -23,7 +27,8 @@ Config for logging is defined at `config/logging.php`. Add `cloudwatch` to the `
             'retention' => env('CLOUDWATCH_LOG_RETENTION_DAYS', 14),
             'group_name' => env('CLOUDWATCH_LOG_GROUP_NAME', 'laravel_app'),
             'version' => env('CLOUDWATCH_LOG_VERSION', 'latest'),
-            'formatter' => \Monolog\Formatter\JsonFormatter::class
+            'formatter' => \Monolog\Formatter\JsonFormatter::class,
+            'disabled' => env('DISABLE_CLOUDWATCH_LOG', false),
         ],
 ]
 ```

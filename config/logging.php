@@ -12,7 +12,7 @@ return [
         'retention' => env('CLOUDWATCH_LOG_RETENTION_DAYS', 14),
         'group_name' => env('CLOUDWATCH_LOG_GROUP_NAME', 'laravel_app'),
         'version' => env('CLOUDWATCH_LOG_VERSION', 'latest'),
-        'disable' => env('DISABLE_CLOUDWATCH_LOG', false),
+        'disabled' => env('DISABLE_CLOUDWATCH_LOG', false),
         'formatter' => function ($configs) {
             return new \Monolog\Formatter\LineFormatter(
                 '%channel%: %level_name%: %message% %context% %extra%',
