@@ -73,7 +73,7 @@ class CloudWatchServiceProvider extends ServiceProvider
             'logging.channels'
         );
 
-        if (!$this->app->make('config')->get('logging.channels.cloudwatch.disable')) {
+        if (!$this->app->make('config')->get('logging.channels.cloudwatch.disabled')) {
             $this->app->singleton('cloudwatch.logger', function () {
                 return $this->getLogger();
             });
