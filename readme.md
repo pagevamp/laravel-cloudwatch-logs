@@ -2,7 +2,7 @@
 
 ### Installation
 
-`composer install pagevamp/laravel-cloudwatch-logs`
+`composer require pagevamp/laravel-cloudwatch-logs`
 
 ### Example
 
