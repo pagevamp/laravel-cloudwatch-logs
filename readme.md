@@ -17,6 +17,7 @@ Config for logging is defined at `config/logging.php`. Add `cloudwatch` to the `
 ```
 'channels' =>  [
     'cloudwatch' => [
+            'driver' => 'custom',
             'name' => env('CLOUDWATCH_LOG_NAME', ''),
             'region' => env('CLOUDWATCH_LOG_REGION', ''),
             'credentials' => [
