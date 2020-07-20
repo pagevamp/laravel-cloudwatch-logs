@@ -1,7 +1,9 @@
 <?php
+use \Pagevamp\Logger;
 
 return [
     'cloudwatch' => [
+        'driver' => 'custom',
         'name' => env('CLOUDWATCH_LOG_NAME', ''),
         'region' => env('CLOUDWATCH_LOG_REGION', ''),
         'credentials' => [
@@ -21,5 +23,6 @@ return [
                 true
             );
         },
+        'via' => Logger::class
     ],
 ];
