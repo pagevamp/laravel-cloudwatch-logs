@@ -1,5 +1,4 @@
 <?php
-use \Pagevamp\Logger;
 
 return [
     'cloudwatch' => [
@@ -23,6 +22,6 @@ return [
                 true
             );
         },
-        'via' => Logger::class
+        'via' => \Pagevamp\Logger::class
     ],
 ];

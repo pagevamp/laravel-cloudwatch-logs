@@ -11,13 +11,18 @@ class Logger
 {
 
     private $app;
-    public function __construct($app)
+
+    public function __construct($app = null)
     {
         $this->app = $app;
     }
 
     public function __invoke(array $config)
     {
+        if($this->app === null) {
+            $this->app = \app();
+        }
+
         $loggingConfig = $config;
         $cwClient = new CloudWatchLogsClient($this->getCredentials());
 
