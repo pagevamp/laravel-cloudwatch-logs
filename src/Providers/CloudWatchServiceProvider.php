@@ -123,6 +123,9 @@ class CloudWatchServiceProvider extends ServiceProvider
         if ($cloudWatchConfigs['credentials']['key']) {
             $awsCredentials['credentials'] = $cloudWatchConfigs['credentials'];
         }
+        if ($cloudWatchConfigs['profile']) {
+            $awsCredentials['profile'] = $cloudWatchConfigs['profile'];
+        }
 
         return $awsCredentials;
     }
