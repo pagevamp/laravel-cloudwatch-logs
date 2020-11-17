@@ -1,20 +1,20 @@
 <?php
 
-namespace Tests\Providers;
+namespace Tests;
 
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
-use Mockery;
 use Monolog\Formatter\JsonFormatter;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Formatter\LogglyFormatter;
 use Monolog\Logger;
 use Pagevamp\Exceptions\IncompleteCloudWatchConfig;
-use Pagevamp\Providers\CloudWatchServiceProvider;
 use PHPUnit\Framework\TestCase;
+use \Mockery;
 
-class CloudWatchServiceProviderTest extends TestCase
+class LoggerTest extends TestCase
 {
+
     public function testGetLoggerShouldResolveCustomFormatterInstanceFromConfiguration()
     {
         $cloudwatchConfigs = [
@@ -55,8 +55,8 @@ class CloudWatchServiceProviderTest extends TestCase
             ->with(JsonFormatter::class)
             ->andReturn($formatter);
 
-        $provider = new CloudWatchServiceProvider($app);
-        $logger = $provider->getLogger();
+        $provider = new \Pagevamp\Logger($app);
+        $logger = $provider($cloudwatchConfigs);
 
         $this->assertInstanceOf(Logger::class, $logger);
         $this->assertNotEmpty($logger->getHandlers());
@@ -106,8 +106,8 @@ class CloudWatchServiceProviderTest extends TestCase
             ->with(JsonFormatter::class)
             ->andReturn($formatter);
 
-        $provider = new CloudWatchServiceProvider($app);
-        $logger = $provider->getLogger();
+        $provider = new \Pagevamp\Logger($app);
+        $logger = $provider($cloudwatchConfigs);
 
         $this->assertInstanceOf(Logger::class, $logger);
         $this->assertNotEmpty($logger->getHandlers());
@@ -156,8 +156,8 @@ class CloudWatchServiceProviderTest extends TestCase
             ->with(LineFormatter::class)
             ->andReturn($formatter);
 
-        $provider = new CloudWatchServiceProvider($app);
-        $logger = $provider->getLogger();
+        $provider = new \Pagevamp\Logger($app);
+        $logger = $provider($cloudwatchConfigs);
 
         $this->assertInstanceOf(Logger::class, $logger);
         $this->assertNotEmpty($logger->getHandlers());
@@ -209,8 +209,8 @@ class CloudWatchServiceProviderTest extends TestCase
             ->with(LogglyFormatter::class)
             ->andReturn($formatter);
 
-        $provider = new CloudWatchServiceProvider($app);
-        $logger = $provider->getLogger();
+        $provider = new \Pagevamp\Logger($app);
+        $logger = $provider($cloudwatchConfigs);
 
         $this->assertInstanceOf(Logger::class, $logger);
         $this->assertNotEmpty($logger->getHandlers());
@@ -255,7 +255,7 @@ class CloudWatchServiceProviderTest extends TestCase
             ->andReturn($config);
 
         $this->expectException(IncompleteCloudWatchConfig::class);
-        $provider = new CloudWatchServiceProvider($app);
-        $provider->getLogger();
+        $provider = new \Pagevamp\Logger($app);
+        $provider($cloudwatchConfigs);
     }
 }

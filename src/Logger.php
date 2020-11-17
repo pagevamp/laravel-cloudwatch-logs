@@ -1,50 +1,30 @@
 <?php
 
-namespace Pagevamp\Providers;
+namespace Pagevamp;
 
 use Aws\CloudWatchLogs\CloudWatchLogsClient;
-use Illuminate\Support\ServiceProvider;
 use Maxbanton\Cwh\Handler\CloudWatch;
 use Monolog\Formatter\LineFormatter;
-use Monolog\Logger;
 use Pagevamp\Exceptions\IncompleteCloudWatchConfig;
 
-class CloudWatchServiceProvider extends ServiceProvider
+class Logger
 {
-    public function boot()
+
+    private $app;
+
+    public function __construct($app = null)
     {
-        $isCloudWatchDisabled = $this->app->make('config')->get('logging.channels.cloudwatch.disabled');
-        if (!$isCloudWatchDisabled) {
-            $app = $this->app;
-            $app['log']->listen(function () use ($app) {
-                $args = \func_get_args();
-
-                // Laravel 5.4 returns a MessageLogged instance only
-                if (1 == \count($args)) {
-                    $level = $args[0]->level;
-                    $message = $args[0]->message;
-                    $context = $args[0]->context;
-                } else {
-                    $level = $args[0];
-                    $message = $args[1];
-                    $context = $args[2];
-                }
-
-                if ($message instanceof \ErrorException) {
-                    return $this->getLogger()->log($level, $message, $context);
-                }
-
-                if ($app['cloudwatch.logger'] instanceof Logger) {
-                    $app['cloudwatch.logger']->log($level, $message, $context);
-                }
-            });
-        }
+        $this->app = $app;
     }
 
-    public function getLogger()
+    public function __invoke(array $config)
     {
+        if($this->app === null) {
+            $this->app = \app();
+        }
+
+        $loggingConfig = $config;
         $cwClient = new CloudWatchLogsClient($this->getCredentials());
-        $loggingConfig = $this->app->make('config')->get('logging.channels.cloudwatch');
 
         $streamName = $loggingConfig['stream_name'];
         $retentionDays = $loggingConfig['retention'];
@@ -52,32 +32,13 @@ class CloudWatchServiceProvider extends ServiceProvider
         $batchSize = isset($loggingConfig['batch_size']) ? $loggingConfig['batch_size'] : 10000;
 
         $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, $batchSize);
-        $logger = new Logger($loggingConfig['name']);
+        $logger = new \Monolog\Logger($loggingConfig['name']);
 
         $formatter = $this->resolveFormatter($loggingConfig);
         $logHandler->setFormatter($formatter);
         $logger->pushHandler($logHandler);
 
         return $logger;
-    }
-
-    /**
-     * Code "inspired" from here
-     * https://aws.amazon.com/blogs/developer/php-application-logging-with-amazon-cloudwatch-logs-and-monolog
-     * Laravel installation mentioned here did not work but PHP with Monolog worked, hence this package.
-     */
-    public function register()
-    {
-        $this->mergeConfigFrom(
-            __DIR__.'/../../config/logging.php',
-            'logging.channels'
-        );
-
-        if (!$this->app->make('config')->get('logging.channels.cloudwatch.disabled')) {
-            $this->app->singleton('cloudwatch.logger', function () {
-                return $this->getLogger();
-            });
-        }
     }
 
     /**
