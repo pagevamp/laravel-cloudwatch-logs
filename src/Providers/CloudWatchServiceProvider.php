@@ -46,7 +46,7 @@ class CloudWatchServiceProvider extends ServiceProvider
         $cwClient = new CloudWatchLogsClient($this->getCredentials());
         $loggingConfig = $this->app->make('config')->get('logging.channels.cloudwatch');
 
-        $streamName = $loggingConfig['stream_name'];
+        $streamName = $this->resolveStreamName($loggingConfig['stream_name']);
         $retentionDays = $loggingConfig['retention'];
         $groupName = $loggingConfig['group_name'];
         $batchSize = isset($loggingConfig['batch_size']) ? $loggingConfig['batch_size'] : 10000;
@@ -59,6 +59,15 @@ class CloudWatchServiceProvider extends ServiceProvider
         $logger->pushHandler($logHandler);
 
         return $logger;
+    }
+
+    protected function resolveStreamName($configuredValue)
+    {
+        if (is_callable($configuredValue)) {
+            return call_user_func($configuredValue);
+        }
+
+        return $configuredValue;
     }
 
     /**
