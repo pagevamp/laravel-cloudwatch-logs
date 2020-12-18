@@ -12,6 +12,7 @@ use Monolog\Logger;
 use Pagevamp\Exceptions\IncompleteCloudWatchConfig;
 use Pagevamp\Providers\CloudWatchServiceProvider;
 use PHPUnit\Framework\TestCase;
+use Tests\Support\CallableStreamNameGenerator;
 
 class CloudWatchServiceProviderTest extends TestCase
 {
@@ -19,7 +20,7 @@ class CloudWatchServiceProviderTest extends TestCase
     {
         $cloudwatchConfigs = [
             'name' => '',
-            'region' => '',
+            'region' => 'eu-west-2',
             'credentials' => [
                 'key' => '',
                 'secret' => '',
@@ -70,7 +71,7 @@ class CloudWatchServiceProviderTest extends TestCase
     {
         $cloudwatchConfigs = [
             'name' => '',
-            'region' => '',
+            'region' => 'eu-west-2',
             'credentials' => [
                 'key' => '',
                 'secret' => '',
@@ -121,7 +122,7 @@ class CloudWatchServiceProviderTest extends TestCase
     {
         $cloudwatchConfigs = [
             'name' => '',
-            'region' => '',
+            'region' => 'eu-west-2',
             'credentials' => [
                 'key' => '',
                 'secret' => '',
@@ -171,7 +172,7 @@ class CloudWatchServiceProviderTest extends TestCase
     {
         $cloudwatchConfigs = [
             'name' => '',
-            'region' => '',
+            'region' => 'eu-west-2',
             'credentials' => [
                 'key' => '',
                 'secret' => '',
@@ -224,7 +225,7 @@ class CloudWatchServiceProviderTest extends TestCase
     {
         $cloudwatchConfigs = [
             'name' => '',
-            'region' => '',
+            'region' => 'eu-west-2',
             'credentials' => [
                 'key' => '',
                 'secret' => '',
@@ -257,5 +258,48 @@ class CloudWatchServiceProviderTest extends TestCase
         $this->expectException(IncompleteCloudWatchConfig::class);
         $provider = new CloudWatchServiceProvider($app);
         $provider->getLogger();
+    }
+
+    public function testGetLoggerShouldResolveCallableStreamName()
+    {
+        $cloudwatchConfigs = [
+            'name' => '',
+            'region' => 'eu-west-2',
+            'credentials' => [
+                'key' => '',
+                'secret' => '',
+            ],
+            'stream_name' => [CallableStreamNameGenerator::class, 'generateStreamName'],
+            'retention' => 14,
+            'group_name' => 'laravel_app',
+            'version' => 'latest',
+        ];
+
+        $config = Mockery::mock(Repository::class);
+        $config->shouldReceive('get')
+            ->once()
+            ->with('logging.channels')
+            ->andReturn([
+                'cloudwatch' => $cloudwatchConfigs,
+            ]);
+        $config->shouldReceive('get')
+            ->once()
+            ->with('logging.channels.cloudwatch')
+            ->andReturn($cloudwatchConfigs);
+
+        $app = Mockery::mock(Application::class);
+        $app->shouldReceive('make')
+            ->once()
+            ->with('config')
+            ->andReturn($config);
+
+        $provider = new CloudWatchServiceProvider($app);
+        $logger = $provider->getLogger();
+
+        $this->assertInstanceOf(Logger::class, $logger);
+        $this->assertNotEmpty($logger->getHandlers());
+
+        // stream_name will end up as the result of CallableStreamNameGenerator::generateStreamName, however I cannot
+        // find a getter for that value to assert with.
     }
 }
