@@ -14,6 +14,7 @@ return [
         'group_name' => env('CLOUDWATCH_LOG_GROUP_NAME', 'laravel_app'),
         'version' => env('CLOUDWATCH_LOG_VERSION', 'latest'),
         'disabled' => env('DISABLE_CLOUDWATCH_LOG', false),
+        'batch_size' => env('CLOUDWATCH_LOG_BATCH_SIZE', 10000),
         'formatter' => function ($configs) {
             return new \Monolog\Formatter\LineFormatter(
                 '%channel%: %level_name%: %message% %context% %extra%',

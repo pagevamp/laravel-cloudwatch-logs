@@ -2,9 +2,10 @@
 
 ### Breaking Change for version 1.0
 
-When this package started it started as a listener for log event and would only work with another driver.
-This package would listen to log events and just log extra to cloud watch but after `1.0` it works as a custom driver.
-So, you MUST add a `LOG_CHANNEL` for logging in your config for this to work.
+When this package started it started as a listener for log event and would only work with another channel.
+This package would listen to log events and just add extra log to cloud watch. So you did not need to add mention this as `channel`.
+But after `1.0` it works as a custom driver.
+So, you MUST add a `LOG_CHANNEL` as `cloudwatch` for logging in your config for this to work going forward
 
 ### Installation
 
@@ -34,13 +35,14 @@ Config for logging is defined at `config/logging.php`. Add `cloudwatch` to the `
             'retention' => env('CLOUDWATCH_LOG_RETENTION_DAYS', 14),
             'group_name' => env('CLOUDWATCH_LOG_GROUP_NAME', 'laravel_app'),
             'version' => env('CLOUDWATCH_LOG_VERSION', 'latest'),
-            'formatter' => \Monolog\Formatter\JsonFormatter::class,           
+            'formatter' => \Monolog\Formatter\JsonFormatter::class,       
+            'batch_size' => env('CLOUDWATCH_LOG_BATCH_SIZE', 10000),    
             'via' => \Pagevamp\Logger::class,
         ],
 ]
 ```
 
-And set the log channel in your environment variable to `LOG_CHANNEL` to `cloudwatch`.
+And set the `LOG_CHANNEL` in your environment variable to `cloudwatch`.
 
 If the role of your AWS EC2 instance has access to Cloudwatch logs, `CLOUDWATCH_LOG_KEY` and `CLOUDWATCH_LOG_SECRET` need not be defined in your `.env` file.
 
