@@ -46,6 +46,7 @@ class Logger
      * in key cloudwatch.
      *
      * 'cloudwatch' => [
+     *      'driver' => 'custom',
      *     'name' => env('CLOUDWATCH_LOG_NAME', ''),
      *     'region' => env('CLOUDWATCH_LOG_REGION', ''),
      *     'credentials' => [
@@ -56,6 +57,7 @@ class Logger
      *     'retention' => env('CLOUDWATCH_LOG_RETENTION_DAYS', 14),
      *     'group_name' => env('CLOUDWATCH_LOG_GROUP_NAME', 'laravel_app'),
      *     'version' => env('CLOUDWATCH_LOG_VERSION', 'latest'),
+     *      'via' => \Pagevamp\Logger::class,
      * ]
      *
      * @return array
