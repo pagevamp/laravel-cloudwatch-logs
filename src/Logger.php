@@ -57,7 +57,7 @@ class Logger
      *     'retention' => env('CLOUDWATCH_LOG_RETENTION_DAYS', 14),
      *     'group_name' => env('CLOUDWATCH_LOG_GROUP_NAME', 'laravel_app'),
      *     'version' => env('CLOUDWATCH_LOG_VERSION', 'latest'),
-     *      'via' => \Pagevamp\Logger::class,
+     *     'via' => \Pagevamp\Logger::class,
      * ]
      *
      * @return array
