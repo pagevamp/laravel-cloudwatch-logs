@@ -2,10 +2,10 @@
 
 ### Breaking Change for version 1.0
 
-When this package started it started as a listener for log event and would only work with another channel.
-This package would listen to log events and just add extra log to cloud watch. So you did not need to add mention this as `channel`.
+When this package started, it started as a listener for log events and would only work with another channel.
+This package would listen to log events and just add extra log to cloud watch. So, you did not need to add cloudwatch as a `channel`.
 But after `1.0` it works as a custom driver.
-So, you MUST add a `LOG_CHANNEL` as `cloudwatch` for logging in your config for this to work going forward
+So, you MUST add `LOG_CHANNEL` as `cloudwatch` in your logging config for this to work going forward. 
 
 ### Installation
 
