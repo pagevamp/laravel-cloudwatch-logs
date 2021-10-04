@@ -17,6 +17,10 @@ You can use laravel's default `\Log` class to use this
 
 `\Log::info('user logged in', ['id' => 123, 'name' => 'Naren']);`
 
+### Usage with AWS Lambda
+
+Make sure the AWS Lambda template contains an IAM role with enough access to create log groups.
+
 ### Config
 
 Config for logging is defined at `config/logging.php`. Add `cloudwatch` to the `channels` array
