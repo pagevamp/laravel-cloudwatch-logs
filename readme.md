@@ -19,7 +19,8 @@ You can use laravel's default `\Log` class to use this
 
 ### Usage with AWS Lambda
 
-Make sure the AWS Lambda template contains an IAM role with enough access to create log groups.
+Make sure the AWS Lambda template contains an IAM role with enough access.
+So think about Logs:CreateLogGroup, Logs:DescribeLogGroups, Logs:CreateLogStream, Logs:DescribeLogStream, Logs:PutRetentionPolicy and Logs:PutLogEvents
 
 ### Config
 
