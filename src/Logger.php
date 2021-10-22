@@ -7,8 +7,18 @@ use Maxbanton\Cwh\Handler\CloudWatch;
 use Monolog\Formatter\LineFormatter;
 use Pagevamp\Exceptions\IncompleteCloudWatchConfig;
 
-class Logger
-{
+class Logger {
+
+    protected static $log_levels = [
+        'DEBUG' => Logger::DEBUG,
+        'INFO' => Logger::INFO,
+        'NOTICE' => Logger::NOTICE,
+        'WARNING' => Logger::WARNING,
+        'ERROR' => Logger::ERROR,
+        'CRITICAL' => Logger::CRITICAL,
+        'ALERT' => Logger::ALERT,
+        'EMERGENCY' => Logger::EMERGENCY
+    ];
 
     private $app;
 
@@ -19,7 +29,7 @@ class Logger
 
     public function __invoke(array $config)
     {
-        if($this->app === null) {
+        if ($this->app === null) {
             $this->app = \app();
         }
 
@@ -31,7 +41,7 @@ class Logger
         $groupName = $loggingConfig['group_name'];
         $batchSize = isset($loggingConfig['batch_size']) ? $loggingConfig['batch_size'] : 10000;
 
-        $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, $batchSize);
+        $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, $batchSize, [], (Logger::$log_levels[strtoupper($loggingConfig['level'])] ?? \Monolog\Logger::DEBUG));
         $logger = new \Monolog\Logger($loggingConfig['name']);
 
         $formatter = $this->resolveFormatter($loggingConfig);
