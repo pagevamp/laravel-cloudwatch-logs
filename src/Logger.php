@@ -42,7 +42,7 @@ class Logger {
         $groupName = $loggingConfig['group_name'];
         $batchSize = isset($loggingConfig['batch_size']) ? $loggingConfig['batch_size'] : 10000;
 
-        $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, $batchSize, [], (MonologLogger::$log_levels[strtoupper($loggingConfig['level'])] ?? MonologLogger::DEBUG));
+        $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, $batchSize, [], (Logger::$log_levels[strtoupper($loggingConfig['level'])] ?? MonologLogger::DEBUG));
         $logger = new MonologLogger($loggingConfig['name']);
 
         $formatter = $this->resolveFormatter($loggingConfig);
