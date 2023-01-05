@@ -51,6 +51,10 @@ And set the `LOG_CHANNEL` in your environment variable to `cloudwatch`.
 
 If the role of your AWS EC2 instance has access to Cloudwatch logs, `CLOUDWATCH_LOG_KEY` and `CLOUDWATCH_LOG_SECRET` need not be defined in your `.env` file.
 
+### AWS IAM permissions
+
+The needed permissions can be found [here](https://github.com/maxbanton/cwh#aws-iam-needed-permissions).
+
 ### Contribution
 
 I have added a `pre-commit` hook to run `php-cs-fixer` whenever you make a commit. To enable this run `sh hooks.sh`.
