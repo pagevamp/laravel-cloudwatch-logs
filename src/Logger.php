@@ -2,6 +2,7 @@
 
 namespace Pagevamp;
 
+use Monolog\Logger as MonoLogger;
 use Aws\CloudWatchLogs\CloudWatchLogsClient;
 use Maxbanton\Cwh\Handler\CloudWatch;
 use Monolog\Formatter\LineFormatter;
@@ -29,9 +30,10 @@ class Logger
         $streamName = $loggingConfig['stream_name'];
         $retentionDays = $loggingConfig['retention'];
         $groupName = $loggingConfig['group_name'];
+        $createGroup = $loggingConfig['create_group'];
         $batchSize = isset($loggingConfig['batch_size']) ? $loggingConfig['batch_size'] : 10000;
 
-        $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, $batchSize);
+        $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, $batchSize, [], MonoLogger::DEBUG, true, $createGroup);
         $logger = new \Monolog\Logger($loggingConfig['name']);
 
         $formatter = $this->resolveFormatter($loggingConfig);
