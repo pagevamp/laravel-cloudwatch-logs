@@ -3,7 +3,7 @@
 namespace Pagevamp;
 
 use Aws\CloudWatchLogs\CloudWatchLogsClient;
-use Maxbanton\Cwh\Handler\CloudWatch;
+use Phpnexus\Cwh\Handler\CloudWatch;
 use Monolog\Formatter\LineFormatter;
 use Pagevamp\Exceptions\IncompleteCloudWatchConfig;
 
