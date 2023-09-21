@@ -4,7 +4,7 @@ namespace Pagevamp;
 
 use Monolog\Logger as MonoLogger;
 use Aws\CloudWatchLogs\CloudWatchLogsClient;
-use Maxbanton\Cwh\Handler\CloudWatch;
+use PhpNexus\Cwh\Handler\CloudWatch;
 use Monolog\Formatter\LineFormatter;
 use Pagevamp\Exceptions\IncompleteCloudWatchConfig;
 
