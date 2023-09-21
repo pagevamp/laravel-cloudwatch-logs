@@ -30,7 +30,7 @@ class Logger
         $streamName = $loggingConfig['stream_name'];
         $retentionDays = $loggingConfig['retention'];
         $groupName = $loggingConfig['group_name'];
-        $createGroup = $loggingConfig['create_group'];
+        $createGroup = isset($loggingConfig['create_group']) ? $loggingConfig['create_group'] : true;
         $batchSize = isset($loggingConfig['batch_size']) ? $loggingConfig['batch_size'] : 10000;
 
         $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, $batchSize, [], MonoLogger::DEBUG, true, $createGroup);
