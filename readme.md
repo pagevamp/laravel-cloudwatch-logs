@@ -41,7 +41,8 @@ Config for logging is defined at `config/logging.php`. Add `cloudwatch` to the `
             'group_name' => env('CLOUDWATCH_LOG_GROUP_NAME', 'laravel_app'),
             'version' => env('CLOUDWATCH_LOG_VERSION', 'latest'),
             'formatter' => \Monolog\Formatter\JsonFormatter::class,       
-            'batch_size' => env('CLOUDWATCH_LOG_BATCH_SIZE', 10000),    
+            'batch_size' => env('CLOUDWATCH_LOG_BATCH_SIZE', 10000),
+            'create_group' => env('CLOUDWATCH_CREATE_GROUP', true)
             'via' => \Pagevamp\Logger::class,
         ],
 ]
@@ -50,6 +51,10 @@ Config for logging is defined at `config/logging.php`. Add `cloudwatch` to the `
 And set the `LOG_CHANNEL` in your environment variable to `cloudwatch`.
 
 If the role of your AWS EC2 instance has access to Cloudwatch logs, `CLOUDWATCH_LOG_KEY` and `CLOUDWATCH_LOG_SECRET` need not be defined in your `.env` file.
+
+### AWS IAM permissions
+
+The needed permissions can be found [here](https://github.com/maxbanton/cwh#aws-iam-needed-permissions).
 
 ### Contribution
 
