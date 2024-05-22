@@ -3,6 +3,7 @@
 namespace Pagevamp;
 
 use Aws\CloudWatchLogs\CloudWatchLogsClient;
+use Monolog\Level;
 use PhpNexus\Cwh\Handler\CloudWatch;
 use Monolog\Formatter\LineFormatter;
 use Pagevamp\Exceptions\IncompleteCloudWatchConfig;
@@ -30,8 +31,21 @@ class Logger
         $retentionDays = $loggingConfig['retention'];
         $groupName = $loggingConfig['group_name'];
         $batchSize = isset($loggingConfig['batch_size']) ? $loggingConfig['batch_size'] : 10000;
+        $rpsLimit = isset($loggingConfig['rps_limit']) ? $loggingConfig['rps_limit'] : 0;
 
-        $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, $batchSize);
+        $logHandler = new CloudWatch(
+            $cwClient,
+            $groupName,
+            $streamName,
+            $retentionDays,
+            $batchSize,
+            [],
+            Level::Debug,
+            true,
+            true,
+            true,
+            $rpsLimit
+        );
         $logger = new \Monolog\Logger($loggingConfig['name']);
 
         $formatter = $this->resolveFormatter($loggingConfig);
