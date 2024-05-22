@@ -42,9 +42,9 @@ class Logger
             [],
             Level::Debug,
             true,
-        true,
-        true,
-        $rpsLimit
+            true,
+            true,
+            $rpsLimit
         );
         $logger = new \Monolog\Logger($loggingConfig['name']);
 
