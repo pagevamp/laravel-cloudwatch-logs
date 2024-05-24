@@ -41,7 +41,8 @@ Config for logging is defined at `config/logging.php`. Add `cloudwatch` to the `
             'group_name' => env('CLOUDWATCH_LOG_GROUP_NAME', 'laravel_app'),
             'version' => env('CLOUDWATCH_LOG_VERSION', 'latest'),
             'formatter' => \Monolog\Formatter\JsonFormatter::class,       
-            'batch_size' => env('CLOUDWATCH_LOG_BATCH_SIZE', 10000),    
+            'batch_size' => env('CLOUDWATCH_LOG_BATCH_SIZE', 10000),  
+            'level' => env('CLOUDWATCH_LOG_LEVEL', 'info'), 
             'via' => \Pagevamp\Logger::class,
         ],
 ]
