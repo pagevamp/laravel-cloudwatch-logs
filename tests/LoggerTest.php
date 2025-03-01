@@ -19,7 +19,7 @@ class LoggerTest extends TestCase
     {
         $cloudwatchConfigs = [
             'name' => '',
-            'region' => '',
+            'region' => 'us-east-1',
             'credentials' => [
                 'key' => '',
                 'secret' => '',
@@ -70,7 +70,7 @@ class LoggerTest extends TestCase
     {
         $cloudwatchConfigs = [
             'name' => '',
-            'region' => '',
+            'region' => 'us-east-1',
             'credentials' => [
                 'key' => '',
                 'secret' => '',
@@ -121,7 +121,7 @@ class LoggerTest extends TestCase
     {
         $cloudwatchConfigs = [
             'name' => '',
-            'region' => '',
+            'region' => 'us-east-1',
             'credentials' => [
                 'key' => '',
                 'secret' => '',
@@ -171,7 +171,7 @@ class LoggerTest extends TestCase
     {
         $cloudwatchConfigs = [
             'name' => '',
-            'region' => '',
+            'region' => 'us-east-1',
             'credentials' => [
                 'key' => '',
                 'secret' => '',
@@ -224,7 +224,7 @@ class LoggerTest extends TestCase
     {
         $cloudwatchConfigs = [
             'name' => '',
-            'region' => '',
+            'region' => 'us-east-1',
             'credentials' => [
                 'key' => '',
                 'secret' => '',
