@@ -83,9 +83,10 @@ class Logger
             'version' => $cloudWatchConfigs['version'],
         ];
 
-        if ($cloudWatchConfigs['credentials']['key']) {
-            $awsCredentials['credentials'] = $cloudWatchConfigs['credentials'];
+        if (!isset($cloudWatchConfigs['credentials'])) {
+            throw new IncompleteCloudWatchConfig('Missing credentials');
         }
+        $awsCredentials['credentials'] = $cloudWatchConfigs['credentials'];
 
         return $awsCredentials;
     }
