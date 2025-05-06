@@ -13,6 +13,9 @@ So, you MUST add `LOG_CHANNEL` as `cloudwatch` in your logging config for this t
 composer require pagevamp/laravel-cloudwatch-logs
 ```
 
+### Laravel 9.x Compatibility
+`composer require pagevamp/laravel-cloudwatch-logs:1.0.3`
+
 ### Example
 
 You can use laravel's default `\Log` class to use this
