@@ -22,6 +22,7 @@ return [
                 true
             );
         },
+        'level' => env('CLOUDWATCH_LOG_LEVEL', 'info'),
         'via' => \Pagevamp\Logger::class
     ],
 ];

@@ -29,10 +29,12 @@ class Logger
         $streamName = $loggingConfig['stream_name'];
         $retentionDays = $loggingConfig['retention'];
         $groupName = $loggingConfig['group_name'];
+        $level = isset($loggingConfig['level']) ? $loggingConfig['level'] : 'info';
         $batchSize = isset($loggingConfig['batch_size']) ? $loggingConfig['batch_size'] : 10000;
 
-        $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, $batchSize);
         $logger = new \Monolog\Logger($loggingConfig['name']);
+        $monologLevel = $logger::toMonologLevel($level);
+        $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, $batchSize, [], $monologLevel);
 
         $formatter = $this->resolveFormatter($loggingConfig);
         $logHandler->setFormatter($formatter);
