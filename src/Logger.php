@@ -5,10 +5,21 @@ namespace Pagevamp;
 use Aws\CloudWatchLogs\CloudWatchLogsClient;
 use PhpNexus\Cwh\Handler\CloudWatch;
 use Monolog\Formatter\LineFormatter;
+use Monolog\Logger as MonologLogger;
 use Pagevamp\Exceptions\IncompleteCloudWatchConfig;
 
-class Logger
-{
+class Logger {
+
+    protected static $log_levels = [
+        'DEBUG' => MonologLogger::DEBUG,
+        'INFO' => MonologLogger::INFO,
+        'NOTICE' => MonologLogger::NOTICE,
+        'WARNING' => MonologLogger::WARNING,
+        'ERROR' => MonologLogger::ERROR,
+        'CRITICAL' => MonologLogger::CRITICAL,
+        'ALERT' => MonologLogger::ALERT,
+        'EMERGENCY' => MonologLogger::EMERGENCY
+    ];
 
     private $app;
 
@@ -19,7 +30,7 @@ class Logger
 
     public function __invoke(array $config)
     {
-        if($this->app === null) {
+        if ($this->app === null) {
             $this->app = \app();
         }
 
@@ -31,8 +42,8 @@ class Logger
         $groupName = $loggingConfig['group_name'];
         $batchSize = isset($loggingConfig['batch_size']) ? $loggingConfig['batch_size'] : 10000;
 
-        $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, $batchSize);
-        $logger = new \Monolog\Logger($loggingConfig['name']);
+        $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, $batchSize, [], (Logger::$log_levels[strtoupper($loggingConfig['level'])] ?? MonologLogger::DEBUG));
+        $logger = new MonologLogger($loggingConfig['name']);
 
         $formatter = $this->resolveFormatter($loggingConfig);
         $logHandler->setFormatter($formatter);
