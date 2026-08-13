@@ -27,9 +27,9 @@ class Logger
         $cwClient = new CloudWatchLogsClient($this->getCredentials());
 
         $streamName = $loggingConfig['stream_name'];
-        $retentionDays = $loggingConfig['retention'];
+        $retentionDays = !empty($loggingConfig['retention']) ? (int) $loggingConfig['retention'] : 14;
         $groupName = $loggingConfig['group_name'];
-        $batchSize = isset($loggingConfig['batch_size']) ? $loggingConfig['batch_size'] : 10000;
+        $batchSize = !empty($loggingConfig['batch_size']) ? (int) $loggingConfig['batch_size'] : 10000;
 
         $logHandler = new CloudWatch($cwClient, $groupName, $streamName, $retentionDays, $batchSize);
         $logger = new \Monolog\Logger($loggingConfig['name']);
@@ -83,7 +83,7 @@ class Logger
             'version' => $cloudWatchConfigs['version'],
         ];
 
-        if ($cloudWatchConfigs['credentials']['key']) {
+        if (!empty($cloudWatchConfigs['credentials']['key'] ?? null)) {
             $awsCredentials['credentials'] = $cloudWatchConfigs['credentials'];
         }
 

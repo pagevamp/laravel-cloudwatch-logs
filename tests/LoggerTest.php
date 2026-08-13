@@ -258,4 +258,45 @@ class LoggerTest extends TestCase
         $provider = new \Pagevamp\Logger($app);
         $provider($cloudwatchConfigs);
     }
+
+    public function testGetLoggerShouldCastRetentionAndBatchSizeWhenProvidedAsStringsFromEnvironment()
+    {
+        $cloudwatchConfigs = [
+            'name' => '',
+            'region' => 'us-east-1',
+            'credentials' => [
+                'key' => '',
+                'secret' => '',
+            ],
+            'stream_name' => 'laravel_app',
+            'retention' => '14',
+            'group_name' => 'laravel_app',
+            'version' => 'latest',
+            'batch_size' => '10000',
+        ];
+
+        $config = Mockery::mock(Repository::class);
+        $config->shouldReceive('get')
+            ->once()
+            ->with('logging.channels')
+            ->andReturn([
+                'cloudwatch' => $cloudwatchConfigs,
+            ]);
+        $config->shouldReceive('get')
+            ->once()
+            ->with('logging.channels.cloudwatch')
+            ->andReturn($cloudwatchConfigs);
+
+        $app = Mockery::mock(Application::class);
+        $app->shouldReceive('make')
+            ->once()
+            ->with('config')
+            ->andReturn($config);
+
+        $provider = new \Pagevamp\Logger($app);
+        $logger = $provider($cloudwatchConfigs);
+
+        $this->assertInstanceOf(Logger::class, $logger);
+        $this->assertNotEmpty($logger->getHandlers());
+    }
 }
